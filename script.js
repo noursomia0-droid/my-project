@@ -1,8 +1,9 @@
+//nour somaya
 const supportedCurrencies = {
   USD: { ar: "الدولار الأمريكي", en: "US Dollar" },
   EUR: { ar: "اليورو", en: "Euro" },
   TRY: { ar: "الليرة التركية", en: "Turkish Lira" },
-  SYP: { ar: "الليرة السورية", en: "Syrian Pound" }
+  SYP: { ar: "الليرة السورية", en: "Syrian Pound" },
 };
 
 const currencyOrder = ["USD", "EUR", "TRY", "SYP"];
@@ -11,7 +12,7 @@ const fallbackRates = {
   USD: 1,
   EUR: 0.92,
   TRY: 32.8,
-  SYP: 26000
+  SYP: 26000,
 };
 
 let rates = { ...fallbackRates };
@@ -52,7 +53,7 @@ const CURRENT_USER_KEY = "currencyAppCurrentUser";
 function formatNumber(value) {
   return new Intl.NumberFormat("ar-EG", {
     maximumFractionDigits: 2,
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
   }).format(value);
 }
 
@@ -159,7 +160,9 @@ function handleAuthSubmit(event) {
   }
 
   const users = getUsers();
-  const user = users.find((item) => item.email === email && item.password === password);
+  const user = users.find(
+    (item) => item.email === email && item.password === password,
+  );
 
   if (!user) {
     setAuthMessage("البريد أو كلمة المرور غير صحيحة", "error");
@@ -222,7 +225,7 @@ function renderRateSummary() {
       </div>
       ${items.join("")}
     </div>
-    <div class="rate-note">تم التحقق من أحدث قيمة من API: 1 USD = ${((rates.EUR ?? fallbackRates.EUR)).toFixed(6)} EUR · ${((rates.TRY ?? fallbackRates.TRY)).toFixed(6)} TRY · ${((rates.SYP ?? fallbackRates.SYP)).toFixed(6)} SYP</div>
+    <div class="rate-note">تم التحقق من أحدث قيمة من API: 1 USD = ${(rates.EUR ?? fallbackRates.EUR).toFixed(6)} EUR · ${(rates.TRY ?? fallbackRates.TRY).toFixed(6)} TRY · ${(rates.SYP ?? fallbackRates.SYP).toFixed(6)} SYP</div>
   `;
 }
 
@@ -254,7 +257,7 @@ function convertCurrency() {
     usingFallback
       ? `تم استخدام أسعار بديلة لأن البيانات من API غير متاحة حالياً. آخر تحديث: ${lastUpdatedText}`
       : `تم التحويل بنجاح باستخدام أحدث سعر متوفر. آخر تحديث: ${lastUpdatedText}`,
-    "success"
+    "success",
   );
 }
 
@@ -272,9 +275,12 @@ function startAutoRefresh() {
     clearInterval(refreshTimer);
   }
 
-  refreshTimer = setInterval(() => {
-    loadRates();
-  }, 10 * 60 * 1000);
+  refreshTimer = setInterval(
+    () => {
+      loadRates();
+    },
+    10 * 60 * 1000,
+  );
 }
 
 async function loadRates() {
@@ -304,15 +310,20 @@ async function loadRates() {
       rates.SYP = fallbackRates.SYP;
     }
 
-    const updateTimestamp = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
+    const updateTimestamp = data.time_last_update_utc
+      ? new Date(data.time_last_update_utc)
+      : new Date();
     lastUpdatedText = updateTimestamp.toLocaleString("ar-EG", {
       dateStyle: "medium",
-      timeStyle: "short"
+      timeStyle: "short",
     });
 
     usingFallback = false;
     renderRateSummary();
-    setStatus(`تم تحميل أسعار الصرف الحية بنجاح. آخر تحديث: ${lastUpdatedText}`, "success");
+    setStatus(
+      `تم تحميل أسعار الصرف الحية بنجاح. آخر تحديث: ${lastUpdatedText}`,
+      "success",
+    );
     convertCurrency();
   } catch (error) {
     console.error(error);
@@ -320,13 +331,18 @@ async function loadRates() {
     lastUpdatedText = "لا توجد بيانات حديثة";
     usingFallback = true;
     renderRateSummary();
-    setStatus("تعذر الاتصال بالـ API. سيتم استخدام أسعار بديلة مؤقتاً حتى يعود الاتصال.", "error");
+    setStatus(
+      "تعذر الاتصال بالـ API. سيتم استخدام أسعار بديلة مؤقتاً حتى يعود الاتصال.",
+      "error",
+    );
     convertCurrency();
   }
 }
 
 authForm.addEventListener("submit", handleAuthSubmit);
-toggleAuthModeBtn.addEventListener("click", () => showAuthMode(authMode !== "signup"));
+toggleAuthModeBtn.addEventListener("click", () =>
+  showAuthMode(authMode !== "signup"),
+);
 logoutBtn.addEventListener("click", () => {
   showAuthScreen();
   showAuthMode(false);
@@ -361,7 +377,10 @@ window.addEventListener("focus", () => {
 
 function populateCurrencyOptions() {
   const options = currencyOrder
-    .map((currency) => `<option value="${currency}">${currency} — ${supportedCurrencies[currency].ar} / ${supportedCurrencies[currency].en}</option>`)
+    .map(
+      (currency) =>
+        `<option value="${currency}">${currency} — ${supportedCurrencies[currency].ar} / ${supportedCurrencies[currency].en}</option>`,
+    )
     .join("");
 
   fromCurrency.innerHTML = options;
